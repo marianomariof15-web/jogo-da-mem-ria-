@@ -1,2 +1,2 @@
-# jogo-da-mem-ria-
+# jogo-da-memo-ria-
 Meu jogo da memória 
