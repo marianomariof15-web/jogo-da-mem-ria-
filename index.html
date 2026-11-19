@@ -3,137 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo da Memória</title>
+<meta name="theme-color" content="#7254b8">
+<title>Jogo da Memória 2.0</title>
 <style>
+:root{--ink:#403451;--muted:#81778e;--purple:#7554b8;--purple2:#a78be4;--pink:#ffe8f3;--blue:#e7f3ff;--green:#e3f7ec;--gold:#fff2d9}
 *{box-sizing:border-box}
-body{margin:0;padding:16px;background:#fff5fb;color:#493d60;font-family:Arial,sans-serif}
-main{max-width:850px;margin:auto;background:#fff;border-radius:32px;padding:clamp(18px,4vw,38px);box-shadow:0 8px 30px #6548a015}
-.top{display:flex;justify-content:space-between;align-items:center}
-.tag{background:#f0e5ff;color:#7041bd;border-radius:30px;padding:10px 18px;font-size:clamp(15px,3vw,25px);letter-spacing:1px}
-.brain{font-size:30px}
-h1{text-align:center;font-size:clamp(34px,7vw,64px);margin:30px 0 12px}
-.sub{text-align:center;color:#918795;font-size:clamp(18px,3.5vw,30px);line-height:1.35;margin:0 auto 24px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-.stat{border-radius:22px;padding:18px 5px;text-align:center;min-height:110px;display:flex;flex-direction:column;justify-content:center;gap:10px}
-.stat:nth-child(1){background:#f5e9fc;color:#805a9f}.stat:nth-child(2){background:#e4f3ff;color:#4d8db6}.stat:nth-child(3){background:#fff0dc;color:#a77a3b}
-.stat span{font-size:clamp(15px,2.8vw,25px)}.stat strong{font-size:clamp(28px,5vw,46px)}
-.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.card{aspect-ratio:1;border:0;border-radius:clamp(18px,4vw,34px);background:#b99be9;color:white;font-size:clamp(34px,7vw,62px);cursor:pointer}
-.card.open,.card.matched{background:#e3f6eb;border:4px solid #a8ddc0;color:#4c5260}
-.card.matched{cursor:default}
-.message{margin:18px 0;background:#f8f1fc;border-radius:24px;padding:22px;min-height:135px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}
-.message strong{font-size:clamp(20px,3.5vw,34px);color:#76558f;line-height:1.35}
-.message span{font-size:clamp(16px,2.8vw,25px);color:#94889d;text-align:center}
-.restart{width:100%;border:0;border-radius:50px;background:#00a83e;color:white;padding:18px;font-size:clamp(19px,3.5vw,30px);cursor:pointer}
-footer{text-align:center;color:#94899b;font-size:18px;padding:24px 5px 5px}
-@media(max-width:420px){body{padding:8px}.stats{gap:7px}.stat{min-height:95px;border-radius:16px}.board{gap:8px}.card{border-radius:18px}.message{padding:18px}}
+body{margin:0;padding:18px;background:linear-gradient(135deg,#fff4fa,#f1edff);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(920px,100%);margin:0 auto;background:#fff;border-radius:30px;padding:clamp(16px,4vw,34px);box-shadow:0 16px 50px #55417b18}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:clamp(13px,2.5vw,17px);font-weight:800;letter-spacing:1.5px;color:var(--purple);background:#f1eaff;border-radius:30px;padding:10px 15px}
+.mascot{font-size:32px}
+h1{text-align:center;font-size:clamp(30px,6vw,52px);margin:20px 0 5px}
+.subtitle{text-align:center;color:var(--muted);font-size:clamp(15px,2.7vw,19px);margin:0 0 22px}
+.controls{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.controls label{font-weight:700}
+select,.sound{border:2px solid #e8e0f2;background:#fff;border-radius:14px;padding:11px 13px;color:var(--ink);font:inherit}
+.sound{cursor:pointer;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat{border-radius:18px;padding:13px 7px;text-align:center;min-width:0}
+.stat:nth-child(1){background:var(--pink)}.stat:nth-child(2){background:var(--blue)}.stat:nth-child(3){background:var(--green)}.stat:nth-child(4){background:var(--gold)}
+.stat span{display:block;font-size:clamp(12px,2.3vw,15px);color:var(--muted);margin-bottom:5px}
+.stat strong{font-size:clamp(20px,4vw,30px)}
+.progress-wrap{height:9px;background:#eee8f5;border-radius:99px;overflow:hidden;margin:0 0 18px}
+.progress{height:100%;width:0;background:linear-gradient(90deg,#a98be9,#70cda0);transition:width .25s}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(7px,1.7vw,13px)}
+.card{aspect-ratio:1;border:0;border-radius:clamp(12px,2.5vw,22px);background:linear-gradient(145deg,#b9a1eb,#8e70d0);color:#fff;font-size:clamp(25px,6vw,54px);font-weight:700;cursor:pointer;box-shadow:0 4px 0 #7254b8;transition:transform .15s,background .15s;touch-action:manipulation}
+.card:active{transform:translateY(2px)}
+.card:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #ffb84d;outline-offset:3px}
+.card.open{background:#fff0f7;box-shadow:inset 0 0 0 3px #efa9ce;color:var(--ink)}
+.card.matched{background:#e3f7ec;box-shadow:inset 0 0 0 3px #8fd1aa;color:#3d7954;cursor:default}
+.message{margin:18px 0;background:#f8f4fc;border-radius:20px;padding:17px;text-align:center;min-height:82px}
+.message strong{display:block;font-size:clamp(17px,3vw,22px);margin-bottom:5px;color:var(--purple)}
+.message span{font-size:14px;color:var(--muted)}
+.actions{display:flex;gap:10px}
+.actions button{flex:1;border:0;border-radius:30px;padding:14px 12px;font-size:16px;font-weight:800;cursor:pointer}
+#restart{background:#16a34a;color:white}
+#reset{background:#f0eafa;color:#674a9d}
+footer{text-align:center;color:#968ca1;font-size:12px;margin-top:18px}
+@media(max-width:520px){body{padding:8px}.stats{grid-template-columns:repeat(2,1fr)}.board{gap:8px}.card{border-radius:13px}.actions{flex-direction:column}}
 </style>
 </head>
 <body>
 <main>
- <div class="top"><div class="tag">JOGO DA MEMÓRIA</div><div class="brain">🧠</div></div>
- <h1>Encontre os pares!</h1>
- <p class="sub">Memorize as cartas e encontre os objetos iguais.</p>
- <section class="stats">
+<header><div class="brand">JOGO DA MEMÓRIA 2.0</div><div class="mascot" aria-hidden="true">🧠</div></header>
+<h1>Encontre os pares!</h1>
+<p class="subtitle">Memorize os objetos, encontre os pares e bata seu recorde.</p>
+
+<section class="controls" aria-label="Configurações do jogo">
+  <label for="level">Nível:</label>
+  <select id="level">
+    <option value="easy">Fácil · 8 cartas</option>
+    <option value="medium">Médio · 16 cartas</option>
+    <option value="hard">Difícil · 24 cartas</option>
+  </select>
+  <button class="sound" id="sound" type="button" aria-pressed="true">🔊 Som ligado</button>
+</section>
+
+<section class="stats" aria-label="Estatísticas da partida">
   <div class="stat"><span>Tentativas</span><strong id="attempts">0</strong></div>
   <div class="stat"><span>Pares</span><strong id="pairs">0/4</strong></div>
-  <div class="stat"><span>Cartas</span><strong id="cards">0/8</strong></div>
- </section>
- <section class="board" id="board"></section>
- <section class="message" aria-live="polite">
-  <strong id="headline">👋 Vamos começar?</strong>
-  <span id="hint">Toque em duas cartas para jogar</span>
- </section>
- <button class="restart" id="restart" type="button">⟳ Reiniciar partida</button>
+  <div class="stat"><span>Tempo</span><strong id="time">00:00</strong></div>
+  <div class="stat"><span>Recorde</span><strong id="record">--:--</strong></div>
+</section>
+<div class="progress-wrap" aria-label="Progresso da partida"><div class="progress" id="progress"></div></div>
+<section class="board" id="board" aria-label="Cartas do jogo"></section>
+<section class="message" aria-live="polite">
+  <strong id="headline">👋 Preparado?</strong>
+  <span id="hint">Escolha um nível e toque em duas cartas para começar.</span>
+</section>
+<div class="actions">
+  <button id="restart" type="button">↻ Nova partida</button>
+  <button id="reset" type="button">🏆 Zerar recordes</button>
+</div>
+<footer>Jogo da Memória 2.0 · Objetos · Feito com HTML, CSS e JavaScript</footer>
 </main>
-<footer>Prévia interativa • 8 cartas • 4 pares</footer>
 <script>
 (function(){
- const objetos = ["📷","🎧","⌚","🎒"];
- const tabuleiro = document.getElementById("board");
- const tentativasEl = document.getElementById("attempts");
- const paresEl = document.getElementById("pairs");
- const cartasEl = document.getElementById("cards");
- const tituloEl = document.getElementById("headline");
- const dicaEl = document.getElementById("hint");
- let primeira = null, bloqueado = false, tentativas = 0, pares = 0, abertas = 0, timerFechar = null;
+  "use strict";
+  const objetos = ["📷","🎧","⌚","🎒","📚","⚽","🚲","🎸","💻","📱","🕶️","🧸"];
+  const quantidades = {easy:4, medium:8, hard:12};
+  const nomes = {easy:"Fácil",medium:"Médio",hard:"Difícil"};
+  const board = document.getElementById("board");
+  const levelEl = document.getElementById("level");
+  const attemptsEl = document.getElementById("attempts");
+  const pairsEl = document.getElementById("pairs");
+  const timeEl = document.getElementById("time");
+  const recordEl = document.getElementById("record");
+  const progressEl = document.getElementById("progress");
+  const headlineEl = document.getElementById("headline");
+  const hintEl = document.getElementById("hint");
+  const soundBtn = document.getElementById("sound");
 
- function embaralhar(lista){
-   for(let i=lista.length-1;i>0;i--){
-     const j=Math.floor(Math.random()*(i+1));
-     [lista[i],lista[j]]=[lista[j],lista[i]];
-   }
-   return lista;
- }
- function atualizar(){
-   tentativasEl.textContent=tentativas;
-   paresEl.textContent=pares+"/4";
-   cartasEl.textContent=abertas+"/8";
- }
- function virar(carta){
-   if(bloqueado || carta.classList.contains("open") || carta.classList.contains("matched")) return;
-   carta.classList.add("open");
-   carta.textContent=carta.dataset.objeto;
-   carta.setAttribute("aria-label","Carta "+carta.dataset.objeto);
-   abertas++;
-   atualizar();
+  let first = null, locked = false, attempts = 0, pairs = 0;
+  let seconds = 0, timer = null, hideTimer = null, started = false, soundOn = true;
+  let audioContext = null;
 
-   if(primeira===null){
-     primeira=carta;
-     return;
-   }
-   tentativas++;
-   atualizar();
-
-   if(primeira.dataset.objeto===carta.dataset.objeto){
-     primeira.classList.add("matched");
-     carta.classList.add("matched");
-     primeira=null;
-     pares++;
-     atualizar();
-     tituloEl.textContent="🎉 Muito bem! Você encontrou um par!";
-     dicaEl.textContent=pares===4 ? "Parabéns! Você encontrou todos os pares!" : "Continue assim! Encontre os outros pares.";
-     if(pares===4) tituloEl.textContent="🏆 Parabéns! Você venceu!";
-   }else{
-     bloqueado=true;
-     tituloEl.textContent="💜 Quase! Tente mais uma vez.";
-     dicaEl.textContent="Memorize as posições e procure os objetos iguais.";
-     const anterior=primeira;
-     primeira=null;
-     timerFechar=setTimeout(function(){
-       anterior.classList.remove("open");
-       carta.classList.remove("open");
-       anterior.textContent="?";
-       carta.textContent="?";
-       anterior.setAttribute("aria-label","Carta fechada");
-       carta.setAttribute("aria-label","Carta fechada");
-       abertas-=2;
-       atualizar();
-       bloqueado=false;
-     },900);
-   }
- }
- function iniciar(){
-   if(timerFechar!==null){clearTimeout(timerFechar);timerFechar=null;}
-   primeira=null;bloqueado=false;tentativas=0;pares=0;abertas=0;
-   atualizar();
-   tituloEl.textContent="👋 Vamos começar?";
-   dicaEl.textContent="Toque em duas cartas para jogar";
-   tabuleiro.innerHTML="";
-   const baralho=embaralhar(objetos.concat(objetos));
-   baralho.forEach(function(objeto,indice){
-     const carta=document.createElement("button");
-     carta.type="button";
-     carta.className="card";
-     carta.textContent="?";
-     carta.dataset.objeto=objeto;
-     carta.setAttribute("aria-label","Carta "+(indice+1)+" fechada");
-     carta.addEventListener("click",function(){virar(carta);});
-     tabuleiro.appendChild(carta);
-   });
- }
- document.getElementById("restart").addEventListener("click",iniciar);
- iniciar();
+  function shuffle(list){
+    for(let i=list.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [list[i],list[j]]=[list[j],list[i]];
+    }
+    return list;
+  }
+  function formatTime(value){
+    const min=String(Math.floor(value/60)).padStart(2,"0");
+    const sec=String(value%60).padStart(2,"0");
+    return min+":"+sec;
+  }
+  function recordKey(){return "memoria2-record-"+levelEl.value;}
+  function getRecord(){
+    try{const value=localStorage.getItem(recordKey());return value===null?null:Number(value);}
+    catch(e){return null;}
+  }
+  function showRecord(){
+    const record=getRecord();
+    recordEl.textContent=record===null?"--:--":formatTime(record);
+  }
+  function updateStats(){
+    const total=quantidades[levelEl.value];
+    attemptsEl.textContent=attempts;
+    pairsEl.textContent=pairs+"/"+total;
+    timeEl.textContent=formatTime(seconds);
+    progressEl.style.width=(pairs/total*100)+"%";
+  }
+  function playTone(frequency,duration){
+    if(!soundOn)return;
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx)return;
+      audioContext=audioContext||new AudioCtx();
+      if(audioContext.state==="suspended")audioContext.resume();
+      const oscillator=audioContext.createOscillator();
+      const gain=audioContext.createGain();
+      oscillator.frequency.value=frequency;
+      oscillator.type="sine";
+      gain.gain.setValueAtTime(0.08,audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001,audioContext.currentTime+duration);
+      oscillator.connect(gain);gain.connect(audioContext.destination);
+      oscillator.start();oscillator.stop(audioContext.currentTime+duration);
+    }catch(e){}
+  }
+  function startClock(){
+    if(started)return;
+    started=true;
+    timer=setInterval(function(){seconds++;timeEl.textContent=formatTime(seconds);},1000);
+  }
+  function stopClock(){
+    if(timer!==null){clearInterval(timer);timer=null;}
+  }
+  function finishGame(){
+    stopClock();
+    const old=getRecord();
+    let isRecord=old===null||seconds<old;
+    if(isRecord){
+      try{localStorage.setItem(recordKey(),String(seconds));}catch(e){}
+    }
+    showRecord();
+    const score=Math.max(0,1000-(attempts-pairs)*35-seconds*3);
+    headlineEl.textContent=isRecord?"🏆 Novo recorde! Parabéns!":"🎉 Você venceu!";
+    hintEl.textContent="Nível "+nomes[levelEl.value]+" concluído em "+formatTime(seconds)+" · "+attempts+" tentativas · Pontuação: "+score+".";
+    playTone(660,.12);setTimeout(()=>playTone(880,.2),130);
+  }
+  function flip(card){
+    if(locked||card.classList.contains("open")||card.classList.contains("matched"))return;
+    startClock();
+    card.classList.add("open");
+    card.textContent=card.dataset.object;
+    card.setAttribute("aria-label","Objeto "+card.dataset.object);
+    playTone(420,.07);
+    if(first===null){first=card;return;}
+    attempts++;
+    if(first.dataset.object===card.dataset.object){
+      first.classList.add("matched");card.classList.add("matched");
+      first.disabled=true;card.disabled=true;first=null;pairs++;
+      updateStats();playTone(620,.12);
+      if(pairs===quantidades[levelEl.value])finishGame();
+      else{headlineEl.textContent="✨ Encontrou um par!";hintEl.textContent="Muito bem! Continue procurando.";}
+    }else{
+      locked=true;
+      const previous=first;first=null;
+      headlineEl.textContent="💜 Não foi dessa vez!";
+      hintEl.textContent="Memorize as posições e tente novamente.";
+      playTone(220,.14);
+      hideTimer=setTimeout(function(){
+        previous.classList.remove("open");card.classList.remove("open");
+        previous.textContent="?";card.textContent="?";
+        previous.setAttribute("aria-label","Carta fechada");
+        card.setAttribute("aria-label","Carta fechada");
+        locked=false;hideTimer=null;
+      },850);
+    }
+    attemptsEl.textContent=attempts;
+  }
+  function startGame(){
+    stopClock();
+    if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}
+    const total=quantidades[levelEl.value];
+    first=null;locked=false;attempts=0;pairs=0;seconds=0;started=false;
+    updateStats();showRecord();
+    headlineEl.textContent="👋 Vamos começar?";
+    hintEl.textContent="Encontre os "+total+" pares de objetos.";
+    board.innerHTML="";
+    const deck=shuffle(objetos.slice(0,total).concat(objetos.slice(0,total)));
+    board.style.gridTemplateColumns=total===4?"repeat(4,minmax(0,1fr))":total===8?"repeat(4,minmax(0,1fr))":"repeat(4,minmax(0,1fr))";
+    deck.forEach(function(object,index){
+      const card=document.createElement("button");
+      card.type="button";card.className="card";card.textContent="?";
+      card.dataset.object=object;card.setAttribute("aria-label","Carta "+(index+1)+" fechada");
+      card.addEventListener("click",function(){flip(card);});
+      board.appendChild(card);
+    });
+  }
+  document.getElementById("restart").addEventListener("click",startGame);
+  levelEl.addEventListener("change",startGame);
+  soundBtn.addEventListener("click",function(){
+    soundOn=!soundOn;
+    soundBtn.textContent=soundOn?"🔊 Som ligado":"🔇 Som desligado";
+    soundBtn.setAttribute("aria-pressed",String(soundOn));
+    if(soundOn)playTone(520,.1);
+  });
+  document.getElementById("reset").addEventListener("click",function(){
+    if(!window.confirm("Tem certeza de que deseja apagar os recordes dos três níveis?"))return;
+    try{Object.keys(quantidades).forEach(function(level){localStorage.removeItem("memoria2-record-"+level);});}catch(e){}
+    showRecord();headlineEl.textContent="🏆 Recordes zerados!";hintEl.textContent="Seus próximos resultados começarão uma nova marca.";
+  });
+  startGame();
 })();
 </script>
 </body>
